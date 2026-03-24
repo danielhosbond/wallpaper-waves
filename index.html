@@ -314,6 +314,103 @@
     text-align: right;
     flex-shrink: 0;
   }
+
+  /* MOBILE TABS */
+  #mobile-tabs {
+    display: none;
+    flex-shrink: 0;
+    background: #fff;
+    border-bottom: 1px solid #e0ddd8;
+  }
+  #mobile-tabs button {
+    flex: 1;
+    height: 44px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.1s, border-color 0.1s;
+  }
+  #mobile-tabs button.active {
+    color: #1a1a1a;
+    border-bottom-color: #1a1a1a;
+  }
+
+  @media (max-width: 700px) {
+    body {
+      height: 100svh;
+    }
+    #topbar {
+      padding: 0 10px;
+      gap: 6px;
+    }
+    #topbar h1 {
+      font-size: 13px;
+    }
+    #topbar-actions {
+      gap: 6px;
+    }
+    .json-sep, #import-json-btn, #export-json-btn {
+      display: none;
+    }
+    #main {
+      flex-direction: column;
+    }
+    #canvas-area {
+      flex: none;
+      height: 42svh;
+      order: 1;
+    }
+    #mobile-tabs {
+      display: flex;
+      order: 2;
+    }
+    .panel {
+      width: 100%;
+      border-right: none;
+      border-left: none;
+      border-top: 1px solid #e0ddd8;
+      flex: 1;
+      order: 3;
+      display: none;
+    }
+    .panel.active {
+      display: block;
+    }
+    .slider-row {
+      margin-bottom: 10px;
+    }
+    .slider-row input[type=range] {
+      height: 28px;
+    }
+    .swatch {
+      width: 36px;
+      height: 36px;
+    }
+    .ratio-btn {
+      height: 32px;
+      padding: 0 10px;
+    }
+    .btn {
+      height: 36px;
+      font-size: 13px;
+      padding: 0 14px;
+    }
+    .btn-full {
+      height: 40px;
+    }
+    .preset-btn {
+      padding: 8px 10px;
+    }
+    .toggle-row input[type=checkbox] {
+      width: 18px;
+      height: 18px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -322,7 +419,7 @@
   <h1>Wavy Wallpaper Creator</h1>
   <div id="topbar-actions">
     <button class="btn btn-outline" id="reset-btn">Reset</button>
-    <span style="width:1px;height:20px;background:#e0ddd8;flex-shrink:0;"></span>
+    <span class="json-sep" style="width:1px;height:20px;background:#e0ddd8;flex-shrink:0;"></span>
     <button class="btn btn-outline" id="import-json-btn">Import</button>
     <button class="btn btn-outline" id="export-json-btn">Export</button>
     <input type="file" id="import-json-input" accept=".json,application/json" style="display:none;">
@@ -333,7 +430,7 @@
 
 <div id="main">
   <!-- LEFT PANEL -->
-  <div class="panel" id="left-panel">
+  <div class="panel active" id="left-panel">
 
     <div class="panel-section">
       <div class="section-label">Canvas Ratio</div>
@@ -374,6 +471,12 @@
   <!-- CANVAS AREA -->
   <div id="canvas-area">
     <canvas id="preview-canvas"></canvas>
+  </div>
+
+  <!-- MOBILE TABS -->
+  <div id="mobile-tabs">
+    <button class="active" data-panel="left">Controls</button>
+    <button data-panel="right">Waves</button>
   </div>
 
   <!-- RIGHT PANEL -->
@@ -1087,6 +1190,17 @@ function syncWaveShapeControls() {
   // Re-render the wave shape sliders in the right panel to reflect new values
   buildWaveControls();
 }
+
+// ─── MOBILE TABS ─────────────────────────────────────────────────────────────
+
+document.getElementById('mobile-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-panel]');
+  if (!btn) return;
+  const panel = btn.dataset.panel;
+  document.querySelectorAll('#mobile-tabs button').forEach(b => b.classList.toggle('active', b === btn));
+  document.getElementById('left-panel').classList.toggle('active', panel === 'left');
+  document.getElementById('right-panel').classList.toggle('active', panel === 'right');
+});
 
 // ─── RESIZE OBSERVER ─────────────────────────────────────────────────────────
 
